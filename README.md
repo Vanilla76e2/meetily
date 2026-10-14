@@ -1,3 +1,18 @@
+> **This is a personal fork, not the official Meetily project.**
+>
+> It is kept for private use and is not the place for issues, releases, or contributions.
+> The original project is built by [Zackriya Solutions](https://github.com/Zackriya-Solutions). Use their repository: **[Zackriya-Solutions/meeting-minutes](https://github.com/Zackriya-Solutions/meeting-minutes)**.
+>
+> Это личный форк, а не основной репозиторий Meetily. Вопросы, релизы и участие в разработке — в оригинале: [Zackriya-Solutions/meeting-minutes](https://github.com/Zackriya-Solutions/meeting-minutes).
+
+
+
+
+
+
+
+
+
 <div align="center" style="border-bottom: none">
     <h1>
         <img src="docs/Meetily-6.png" style="border-radius: 10px;" />
