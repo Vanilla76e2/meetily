@@ -1,3 +1,5 @@
+# ATTENTION ВНИМАНИЕ
+
 > **This is a personal fork, not the official Meetily project.**
 >
 > It is kept for private use and is not the place for issues, releases, or contributions.
@@ -6,9 +8,7 @@
 > Это личный форк, а не основной репозиторий Meetily. Вопросы, релизы и участие в разработке — в оригинале: [Zackriya-Solutions/meeting-minutes](https://github.com/Zackriya-Solutions/meeting-minutes).
 
 
-
-
-
+---
 
 
 
