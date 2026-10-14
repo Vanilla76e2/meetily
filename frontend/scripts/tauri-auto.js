@@ -40,6 +40,19 @@ console.log(''); // Empty line for spacing
 const platform = os.platform();
 const env = { ...process.env };
 
+// bindgen 0.69 (whisper-rs-sys) emits opaque structs against LLVM 19+.
+// The user profile sets LIBCLANG_PATH to that newer LLVM, so override it here
+// before Cargo starts. Cargo config uses the same path with force = true.
+const llvm18Bin = 'C:\\Users\\Petrenko.NS\\llvm18\\clang+llvm-18.1.8-x86_64-pc-windows-msvc\\bin';
+if (platform === 'win32' && fs.existsSync(path.join(llvm18Bin, 'libclang.dll'))) {
+  env.LIBCLANG_PATH = llvm18Bin;
+  // process.env on Windows uses "Path". A plain object is case-sensitive, so
+  // assigning env.PATH would replace the whole search path and hide tauri.cmd.
+  const pathKey = Object.keys(env).find((key) => key.toLowerCase() === 'path') || 'PATH';
+  env[pathKey] = `${llvm18Bin}${path.delimiter}${env[pathKey] || ''}`;
+  console.log('Using LLVM 18 libclang for Whisper bindings');
+}
+
 if (platform === 'linux' && feature === 'cuda') {
   console.log('🐧 Linux/CUDA detected: Setting CMAKE flags for NVIDIA GPU');
   env.CMAKE_CUDA_ARCHITECTURES = '75';

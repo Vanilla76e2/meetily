@@ -1,6 +1,6 @@
 {
-      "name": "Client / Sales Meeting",
-      "description": "Capture client goals, deliverables, and next steps.",
+      "name": "Встреча с клиентом",
+      "description": "Цели клиента, договорённости и следующие шаги.",
       "sections": [
         {
           "title": "Meeting Metadata",

@@ -558,9 +558,10 @@ impl ParakeetEngine {
             .transcribe_samples(audio_data)
             .map_err(|e| anyhow!("Parakeet transcription failed: {}", e))?;
 
-        log::debug!("Parakeet transcription result: '{}'", result.text);
+        let text = crate::glossary::apply_to_transcript(&result.text);
+        log::debug!("Parakeet transcription result: '{}'", text);
 
-        Ok(result.text)
+        Ok(text)
     }
 
     /// Get the models directory path

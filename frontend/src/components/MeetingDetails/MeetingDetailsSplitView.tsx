@@ -9,8 +9,8 @@ const MIN_RATIO = 0.3;
 const MAX_RATIO = 0.5;
 
 const TABS = [
-  { value: 'transcript' as const, label: 'Transcript', icon: FileText },
-  { value: 'summary' as const, label: 'Summary', icon: Sparkles },
+  { value: 'transcript' as const, label: 'Расшифровка', icon: FileText },
+  { value: 'summary' as const, label: 'Сводка', icon: Sparkles },
 ];
 
 function readStoredRatio(): number {
@@ -48,6 +48,7 @@ export function MeetingDetailsSplitView({
   onTabChange,
 }: MeetingDetailsSplitViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const summaryPaneRef = useRef<HTMLDivElement>(null);
   const [ratio, setRatio] = useState(DEFAULT_RATIO);
   const [isDesktop, setIsDesktop] = useState(true);
   const dragging = useRef(false);
@@ -101,19 +102,27 @@ export function MeetingDetailsSplitView({
   }, [ratio]);
 
   const transcriptPanelProps = isDesktop
-    ? { role: 'region' as const, 'aria-label': 'Transcript', tabIndex: -1 }
+    ? { role: 'region' as const, 'aria-label': 'Расшифровка', tabIndex: -1 }
     : {};
   const summaryPanelProps = isDesktop
-    ? { role: 'region' as const, 'aria-label': 'Summary', tabIndex: -1 }
+    ? { role: 'region' as const, 'aria-label': 'Сводка', tabIndex: -1 }
     : {};
 
   return (
     <Tabs
       value={activeTab}
-      onValueChange={(value) => onTabChange(value as MeetingDetailsTab)}
+      onValueChange={(value) => {
+        const tab = value as MeetingDetailsTab;
+        onTabChange(tab);
+        if (tab === 'summary') {
+          requestAnimationFrame(() => {
+            summaryPaneRef.current?.scrollIntoView({ inline: 'nearest', block: 'nearest' });
+          });
+        }
+      }}
       className="flex flex-1 min-h-0 min-w-0 flex-col overflow-hidden"
     >
-      <div className="shrink-0 bg-white px-2 md:hidden">
+      <div className="shrink-0 bg-white px-2">
         <TabsList className="relative h-auto w-full justify-center rounded-none border-b border-gray-200 bg-transparent p-0">
           {TABS.map((tab) => {
             const Icon = tab.icon;
@@ -141,7 +150,9 @@ export function MeetingDetailsSplitView({
         <TabsContent
           value="transcript"
           forceMount
-          className="mt-0 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden data-[state=inactive]:hidden md:w-[var(--transcript-pane-width)] md:flex-none md:data-[state=inactive]:flex"
+          className={`mt-0 min-h-0 min-w-0 flex-col overflow-hidden md:w-[var(--transcript-pane-width)] md:flex-none ${
+            isDesktop || activeTab === 'transcript' ? 'flex flex-1' : 'hidden'
+          }`}
           {...transcriptPanelProps}
         >
           {transcript}
@@ -152,8 +163,8 @@ export function MeetingDetailsSplitView({
           aria-valuenow={Math.round(ratio * 100)}
           aria-valuemin={Math.round(MIN_RATIO * 100)}
           aria-valuemax={Math.round(MAX_RATIO * 100)}
-          aria-valuetext={`Transcript panel ${Math.round(ratio * 100)} percent`}
-          aria-label="Resize transcript and summary"
+          aria-valuetext={`Панель расшифровки: ${Math.round(ratio * 100)}%`}
+          aria-label="Изменить размер расшифровки и сводки"
           tabIndex={0}
           className="group relative z-10 hidden w-2 flex-shrink-0 cursor-col-resize items-stretch justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset md:flex"
           onPointerDown={onPointerDown}
@@ -164,7 +175,10 @@ export function MeetingDetailsSplitView({
         <TabsContent
           value="summary"
           forceMount
-          className="mt-0 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden data-[state=inactive]:hidden md:data-[state=inactive]:flex"
+          ref={summaryPaneRef}
+          className={`mt-0 min-h-0 min-w-0 flex-1 flex-col overflow-hidden ${
+            isDesktop || activeTab === 'summary' ? 'flex' : 'hidden'
+          }`}
           {...summaryPanelProps}
         >
           {summary}

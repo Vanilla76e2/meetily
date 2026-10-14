@@ -40,6 +40,7 @@ pub mod api;
 pub mod audio;
 pub mod config;
 pub mod console_utils;
+pub mod glossary;
 pub mod database;
 pub mod notifications;
 pub mod ollama;
@@ -504,6 +505,8 @@ pub fn run() {
                 )),
             };
 
+            glossary::load(_app.handle());
+
             log::info!("Application setup complete");
 
             // Initialize system tray
@@ -774,6 +777,8 @@ pub fn run() {
             audio::recording_preferences::get_audio_backend_info,
             // Language preference commands
             set_language_preference,
+            glossary::get_user_glossary,
+            glossary::set_user_glossary,
             // Notification system commands
             notifications::commands::get_notification_settings,
             notifications::commands::set_notification_settings,

@@ -1,6 +1,6 @@
 {
-  "name": "Daily Standup",
-  "description": "Time-boxed daily updates for engineering/product teams.",
+  "name": "Ежедневный стендап",
+  "description": "Короткие ежедневные статусы команды.",
   "sections": [
     {
       "title": "Date",

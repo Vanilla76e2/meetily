@@ -1,0 +1,5 @@
+[env]
+# bindgen 0.69 (whisper-rs-sys 0.11) cannot read struct layouts from LLVM 19+.
+# Point it at the LLVM 18 libclang extracted next to the user profile.
+# force: the user environment points this variable at LLVM 23, which bindgen 0.69 cannot parse.
+LIBCLANG_PATH = { value = "C:/Users/Petrenko.NS/llvm18/clang+llvm-18.1.8-x86_64-pc-windows-msvc/bin", force = true }

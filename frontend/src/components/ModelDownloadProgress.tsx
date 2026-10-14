@@ -22,7 +22,7 @@ export function ModelDownloadProgress({ status, modelName, onCancel }: ModelDown
         <div className="flex items-center space-x-2">
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
           <span className="text-sm font-medium text-blue-900">
-            {isCompleted ? 'Finalizing...' : `Downloading ${modelName}`}
+            {isCompleted ? 'Завершение...' : `Скачивание ${modelName}`}
           </span>
         </div>
       </div>
@@ -35,16 +35,16 @@ export function ModelDownloadProgress({ status, modelName, onCancel }: ModelDown
           />
         </div>
         <div className="flex justify-between text-xs text-blue-700 mt-1">
-          <span>{Math.round(progress)}% complete</span>
+          <span>{Math.round(progress)}% завершено</span>
           {!isCompleted && (
-            <span className="animate-pulse">Downloading...</span>
+            <span className="animate-pulse">Скачивание...</span>
           )}
         </div>
       </div>
       
       {isCompleted && (
         <div className="mt-2 text-xs text-green-700">
-          ✓ Download completed, loading model...
+          ✓ Загрузка завершена, модель открывается...
         </div>
       )}
     </div>
@@ -106,23 +106,23 @@ interface DownloadSummaryProps {
 
 export function DownloadSummary({ totalModels, downloadedModels, totalSizeMb }: DownloadSummaryProps) {
   const formatSize = (mb: number) => {
-    if (mb >= 1000) return `${(mb / 1000).toFixed(1)}GB`;
-    return `${mb}MB`;
+    if (mb >= 1000) return `${(mb / 1000).toFixed(1)} ГБ`;
+    return `${mb} МБ`;
   };
 
   return (
     <div className="bg-gray-50 rounded-lg p-3 text-sm">
       <div className="flex items-center justify-between">
         <span className="text-gray-700">
-          📦 {downloadedModels} of {totalModels} models available
+          📦 Доступно моделей: {downloadedModels} из {totalModels}
         </span>
         <span className="text-gray-600">
-          💾 {formatSize(totalSizeMb)} total
+          💾 всего {formatSize(totalSizeMb)}
         </span>
       </div>
       {downloadedModels > 0 && (
         <div className="mt-1 text-xs text-green-600">
-          ✓ Models run locally - no internet required for transcription
+          ✓ Модели работают локально — для транскрибации интернет не нужен
         </div>
       )}
     </div>

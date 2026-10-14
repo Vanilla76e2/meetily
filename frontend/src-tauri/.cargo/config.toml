@@ -11,3 +11,6 @@ rustflags = [
 [env]
 MACOSX_DEPLOYMENT_TARGET = { value = "14.2", force = true }
 CMAKE_OSX_DEPLOYMENT_TARGET = "14.2"
+# bindgen 0.69 (whisper-rs-sys 0.11) cannot read struct layouts from LLVM 19+.
+# force: the user environment points this variable at LLVM 23, which bindgen 0.69 cannot parse.
+LIBCLANG_PATH = { value = "C:/Users/Petrenko.NS/llvm18/clang+llvm-18.1.8-x86_64-pc-windows-msvc/bin", force = true }

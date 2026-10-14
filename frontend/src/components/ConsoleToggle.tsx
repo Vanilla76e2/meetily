@@ -59,7 +59,7 @@ export function ConsoleToggle() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <Label htmlFor="console-toggle">
-          Developer Console
+          Консоль разработчика
         </Label>
         <Switch
           id="console-toggle"
@@ -81,11 +81,11 @@ export function ConsoleToggle() {
           onClick={handleToggleConsole}
           disabled={isLoading}
         >
-          Toggle Console
+          Переключить консоль
         </Button>
       </div>
       <p className="text-sm text-muted-foreground">
-        Show or hide the developer console window. On Windows, this controls the console window. On macOS, this opens Terminal with app logs.
+        Показать или скрыть окно консоли разработчика. В Windows это окно консоли, в macOS — Terminal с логами приложения.
       </p>
     </div>
   );

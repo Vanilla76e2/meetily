@@ -8,7 +8,7 @@ import MainContent from '@/components/MainContent'
 import AnalyticsProvider from '@/components/AnalyticsProvider'
 import { Toaster, toast } from 'sonner'
 import "sonner/dist/styles.css"
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useLayoutEffect, useMemo } from 'react'
 import { listen, UnlistenFn } from '@tauri-apps/api/event'
 import { invoke } from '@tauri-apps/api/core'
 import { TooltipProvider } from '@/components/ui/tooltip'
@@ -25,6 +25,7 @@ import { RecordingPostProcessingProvider } from '@/contexts/RecordingPostProcess
 import { ImportAudioDialog, ImportDropOverlay } from '@/components/ImportAudio'
 import { ImportDialogProvider } from '@/contexts/ImportDialogContext'
 import { isAudioExtension, getAudioFormatsDisplayList } from '@/constants/audioFormats'
+import { ThemeContext, ThemeMode, applyTheme, readStoredTheme } from '@/contexts/ThemeContext'
 
 
 const sourceSans3 = Source_Sans_3({
@@ -70,6 +71,31 @@ export default function RootLayout({
 }) {
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [onboardingCompleted, setOnboardingCompleted] = useState(false)
+  const [theme, setThemeMode] = useState<ThemeMode>('light')
+
+  useLayoutEffect(() => {
+    const stored = readStoredTheme()
+    setThemeMode(stored)
+    applyTheme(stored)
+  }, [])
+
+  const setTheme = useCallback((next: ThemeMode) => {
+    setThemeMode(next)
+    applyTheme(next)
+  }, [])
+
+  const toggleTheme = useCallback(() => {
+    setThemeMode((current) => {
+      const next = current === 'dark' ? 'light' : 'dark'
+      applyTheme(next)
+      return next
+    })
+  }, [])
+
+  const themeContext = useMemo(
+    () => ({ theme, setTheme, toggleTheme }),
+    [theme, setTheme, toggleTheme],
+  )
 
   // Import audio state
   const [showDropOverlay, setShowDropOverlay] = useState(false)
@@ -112,8 +138,8 @@ export default function RootLayout({
       console.log('[Layout] Received request-recording-toggle from tray');
 
       if (showOnboarding) {
-        toast.error("Please complete setup first", {
-          description: "You need to finish onboarding before you can start recording."
+        toast.error("Сначала завершите настройку", {
+          description: "Запись можно начать после начальной настройки."
         });
       } else {
         // If in main app, forward to useRecordingStart via window event
@@ -133,8 +159,8 @@ export default function RootLayout({
     const betaFeatures = loadBetaFeatures();
 
     if (!betaFeatures.importAndRetranscribe) {
-      toast.error('Beta feature disabled', {
-        description: 'Enable "Import Audio & Retranscribe" in Settings > Beta to use this feature.'
+      toast.error('Бета-функция выключена', {
+        description: 'Включите «Импорт аудио и повторную расшифровку» в Настройки → Бета.'
       });
       return;
     }
@@ -150,8 +176,8 @@ export default function RootLayout({
       setImportFilePath(audioFile);
       setShowImportDialog(true);
     } else if (paths.length > 0) {
-      toast.error('Please drop an audio file', {
-        description: `Supported formats: ${getAudioFormatsDisplayList()}`
+      toast.error('Перетащите аудиофайл', {
+        description: `Поддерживаемые форматы: ${getAudioFormatsDisplayList()}`
       });
     }
   }, []);
@@ -231,8 +257,14 @@ export default function RootLayout({
   }
 
   return (
-    <html lang="en">
+    <html lang="en" className={theme === 'dark' ? 'dark' : undefined} suppressHydrationWarning>
       <body className={`${sourceSans3.variable} font-sans antialiased`}>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(localStorage.getItem('meetily-theme')==='dark'){document.documentElement.classList.add('dark');document.documentElement.style.colorScheme='dark'}}catch(e){}})();`,
+          }}
+        />
+        <ThemeContext.Provider value={themeContext}>
         <AnalyticsProvider>
           <RecordingStateProvider>
             <TranscriptProvider>
@@ -251,7 +283,7 @@ export default function RootLayout({
                               {showOnboarding ? (
                                 <OnboardingFlow onComplete={handleOnboardingComplete} />
                               ) : (
-                                <div className="flex">
+                                <div className="flex h-screen w-full overflow-hidden">
                                   <Sidebar />
                                   <MainContent>{children}</MainContent>
                                 </div>
@@ -275,8 +307,8 @@ export default function RootLayout({
             </TranscriptProvider>
           </RecordingStateProvider>
         </AnalyticsProvider>
-
-        <Toaster position="bottom-center" richColors closeButton />
+        <Toaster theme={theme} position="bottom-center" richColors closeButton />
+        </ThemeContext.Provider>
       </body>
     </html>
   )

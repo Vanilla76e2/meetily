@@ -27,21 +27,21 @@ function categorizeError(error: string): string {
     lowerError.includes('connection') ||
     lowerError.includes('timeout') ||
     lowerError.includes('failed to start download')) {
-    return 'Network error - Check your internet connection';
+    return 'Ошибка сети — проверить подключение к интернету';
   }
 
   if (lowerError.includes('status:') || lowerError.includes('http')) {
-    return 'Server error - Download temporarily unavailable';
+    return 'Ошибка сервера — загрузка временно недоступна';
   }
 
   if (lowerError.includes('disk') ||
     lowerError.includes('write') ||
     lowerError.includes('file')) {
-    return 'Storage error - Check available disk space';
+    return 'Ошибка хранилища — проверить свободное место';
   }
 
   if (lowerError.includes('invalid') || lowerError.includes('validation')) {
-    return 'File validation failed - Please retry download';
+    return 'Не удалось проверить файл — повторить загрузку';
   }
 
   // Fallback to original error
@@ -59,7 +59,7 @@ function DownloadToastContent({
   const isComplete = download.status === 'completed';
   const hasError = download.status === 'error';
   const isCancelled = download.status === 'cancelled';
-  const unitLabel = download.unitLabel ?? 'MB';
+  const unitLabel = download.unitLabel ?? 'МБ';
 
   return (
     <div className="flex items-center gap-3 w-full max-w-sm bg-white rounded-lg shadow-lg border border-gray-200 p-3 relative">
@@ -87,11 +87,11 @@ function DownloadToastContent({
         </div>
 
         {hasError ? (
-          <p className="text-xs text-red-600">{download.error || 'Download failed'}</p>
+          <p className="text-xs text-red-600">{download.error || 'Не удалось скачать'}</p>
         ) : isComplete ? (
-          <p className="text-xs text-green-600">Download complete</p>
+          <p className="text-xs text-green-600">Загрузка завершена</p>
         ) : isCancelled ? (
-          <p className="text-xs text-gray-600">Download cancelled</p>
+          <p className="text-xs text-gray-600">Загрузка отменена</p>
         ) : (
           <>
             {/* Progress bar */}
@@ -228,7 +228,7 @@ export function useDownloadProgressToast() {
         const { modelName, progress, downloaded_mb, total_mb, speed_mbps, status } = event.payload;
         const downloadData: DownloadProgress = {
           modelName,
-          displayName: 'Transcription Model (Parakeet)',
+          displayName: 'Модель транскрибации (Parakeet)',
           progress,
           downloadedMb: downloaded_mb ?? 0,
           totalMb: total_mb ?? 670,
@@ -253,7 +253,7 @@ export function useDownloadProgressToast() {
         const { modelName } = event.payload;
         const downloadData: DownloadProgress = {
           modelName,
-          displayName: 'Transcription Model (Parakeet)',
+          displayName: 'Модель транскрибации (Parakeet)',
           progress: 100,
           downloadedMb: 670,
           totalMb: 670,
@@ -272,7 +272,7 @@ export function useDownloadProgressToast() {
         const { modelName, error } = event.payload;
         const downloadData: DownloadProgress = {
           modelName,
-          displayName: 'Transcription Model (Parakeet)',
+          displayName: 'Модель транскрибации (Parakeet)',
           progress: 0,
           downloadedMb: 0,
           totalMb: 670,
@@ -308,12 +308,12 @@ export function useDownloadProgressToast() {
 
       const downloadData: DownloadProgress = {
         modelName: model,
-        displayName: `Summary Model (${model})`,
+        displayName: `Модель сводки (${model})`,
         progress: progress ?? 0,
         downloadedMb: downloaded_mb ?? 0,
         totalMb: getDownloadTotalMb(total_mb, model),
         speedMbps: speed_mbps ?? 0,
-        unitLabel: 'MiB',
+        unitLabel: 'МиБ',
         status: status === 'completed' || progress >= 100
           ? 'completed'
           : status === 'cancelled'
@@ -321,7 +321,7 @@ export function useDownloadProgressToast() {
             : status === 'error'
               ? 'error'
               : 'downloading',
-        error: status === 'error' ? categorizeError(error || 'Download failed') : undefined,
+        error: status === 'error' ? categorizeError(error || 'Не удалось скачать') : undefined,
       };
 
       updateDownload(model, downloadData);

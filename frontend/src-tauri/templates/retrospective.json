@@ -1,6 +1,6 @@
 {
-      "name": "Retrospective (Agile)",
-      "description": "Sprint retrospective template for continuous improvement.",
+      "name": "Ретроспектива",
+      "description": "Ретроспектива спринта: что начать, прекратить и продолжить.",
       "sections": [
         {
           "title": "Sprint",

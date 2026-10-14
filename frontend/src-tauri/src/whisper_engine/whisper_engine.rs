@@ -574,6 +574,10 @@ impl WhisperEngine {
         };
         params.set_language(language_code);
         params.set_translate(should_translate);
+        let glossary_prompt = crate::glossary::whisper_initial_prompt();
+        if let Some(prompt) = glossary_prompt.as_deref() {
+            params.set_initial_prompt(prompt);
+        }
 
         // CRITICAL: Disable timestamp tokens to prevent whisper.cpp chunking heuristics
         // The "single timestamp ending - skip entire chunk" optimization incorrectly discards
@@ -654,7 +658,7 @@ impl WhisperEngine {
         }
 
         let final_result = result.trim().to_string();
-        let cleaned_result = Self::clean_repetitive_text(&final_result);
+        let cleaned_result = crate::glossary::apply_to_transcript(&Self::clean_repetitive_text(&final_result));
 
         let avg_confidence = if segment_count > 0 {
             total_confidence / segment_count as f32
@@ -691,6 +695,10 @@ impl WhisperEngine {
         };
         params.set_language(language_code);
         params.set_translate(should_translate);
+        let glossary_prompt = crate::glossary::whisper_initial_prompt();
+        if let Some(prompt) = glossary_prompt.as_deref() {
+            params.set_initial_prompt(prompt);
+        }
 
         // CRITICAL: Disable timestamp tokens to prevent whisper.cpp chunking heuristics
         // The "single timestamp ending - skip entire chunk" optimization incorrectly discards
@@ -814,7 +822,7 @@ impl WhisperEngine {
         let final_result = result.trim().to_string();
 
         // Check for repetition loops and clean them up
-        let cleaned_result = Self::clean_repetitive_text(&final_result);
+        let cleaned_result = crate::glossary::apply_to_transcript(&Self::clean_repetitive_text(&final_result));
 
         // Performance optimization: smart logging for transcription results
         if cleaned_result.is_empty() {

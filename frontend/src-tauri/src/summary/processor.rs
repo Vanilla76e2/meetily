@@ -203,7 +203,7 @@ pub(crate) fn language_name_from_code(code: &str) -> Option<&'static str> {
 }
 
 fn translation_system_prompt(target_language: &str) -> String {
-    format!(
+    let prompt = format!(
         r#"You are a precise translator. Translate the provided Markdown document into {target_language} while preserving structure exactly.
 
 **CRITICAL RULES:**
@@ -212,25 +212,26 @@ fn translation_system_prompt(target_language: &str) -> String {
 3. Do NOT translate: proper nouns (names of people, products, companies), code identifiers, file paths, URLs, numeric values, or text inside backticks.
 4. Do not add commentary or explanation. Output ONLY the translated Markdown.
 5. If a technical term has no standard translation, keep the original English word."#
-    )
+    );
+    crate::glossary::append_to_prompt(&prompt)
 }
 
 fn build_chunk_summary_user_prompt(chunk: &str) -> String {
-    format!(
+    crate::glossary::append_to_prompt(&format!(
         "{ENGLISH_BASE_SUMMARY_INSTRUCTION}\n\nProvide a concise but comprehensive summary of the following transcript chunk. Capture all key points, decisions, action items, and mentioned individuals. Do not include reasoning, self-correction, or meta-commentary — output only the summary content.\n\n<transcript_chunk>\n{chunk}\n</transcript_chunk>"
-    )
+    ))
 }
 
 fn build_combine_summary_user_prompt(combined_text: &str) -> String {
-    format!(
+    crate::glossary::append_to_prompt(&format!(
         "{ENGLISH_BASE_SUMMARY_INSTRUCTION}\n\nThe following are consecutive summaries of a meeting. Combine them into a single, coherent, and detailed narrative summary that retains all important details, organized logically. Do not include reasoning, self-correction, or meta-commentary — output only the summary content.\n\n<summaries>\n{combined_text}\n</summaries>"
-    )
+    ))
 }
 fn build_final_report_system_prompt(
     section_instructions: &str,
     clean_template_markdown: &str,
 ) -> String {
-    format!(
+    let prompt = format!(
         r#"You are an expert meeting summarizer. Generate a final meeting report by filling in the provided Markdown template based on the source text.
 
 **CRITICAL INSTRUCTIONS:**
@@ -249,7 +250,8 @@ fn build_final_report_system_prompt(
 <template>
 {clean_template_markdown}
 </template>"#
-    )
+    );
+    crate::glossary::append_to_prompt(&prompt)
 }
 
 /// Rough token count estimation using character count
@@ -633,8 +635,9 @@ async fn normalize_markdown_to_english(
     let user_prompt = format!(
         "Convert the following Markdown document into English. Return ONLY the English Markdown, nothing else.\n\n<document>\n{markdown}\n</document>"
     );
+    let system_prompt = crate::glossary::append_to_prompt(english_normalization_system_prompt());
     run_markdown_transform(
-        client, provider, model_name, api_key, english_normalization_system_prompt(), &user_prompt,
+        client, provider, model_name, api_key, &system_prompt, &user_prompt,
         "English normalization pass", ollama_endpoint, custom_openai_endpoint, max_tokens,
         temperature, top_p, app_data_dir, cancellation_token,
     )

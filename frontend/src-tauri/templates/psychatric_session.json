@@ -1,6 +1,6 @@
  {
-      "name": "Psychiatric Session Note (SOAP + AI Hybrid)",
-      "description": "AI-assisted psychiatric progress note template based on SOAP, with clinical metadata and AI summary.",
+      "name": "Психиатрическая сессия (SOAP)",
+      "description": "Заметка по сессии в формате SOAP с клиническими полями и сводкой.",
       "sections": [
         {
           "title": "Session Metadata",

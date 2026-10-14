@@ -73,6 +73,9 @@ struct SummaryCacheSource {
     max_tokens: Option<u32>,
     temperature: Option<f32>,
     top_p: Option<f32>,
+    /// Empty when no glossary is saved, so older cached summaries remain usable.
+    #[serde(default)]
+    glossary_fingerprint: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -122,6 +125,7 @@ fn build_summary_cache_source(
         max_tokens,
         temperature,
         top_p,
+        glossary_fingerprint: crate::glossary::cache_fingerprint(),
     }
 }
 
